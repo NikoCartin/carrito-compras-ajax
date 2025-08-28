@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Historial de Compras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .compra {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .compra-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .numero-orden {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .fecha {
+            color: #666;
+        }
+        
+        .productos-lista {
+            margin: 15px 0;
+        }
+        
+        .producto-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .total-compra {
+            text-align: right;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+        
+        .btn-volver {
+            background: #007bff;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .btn-volver:hover {
+            background: #0056b3;
+        }
+        
+        .no-compras {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 Historial de Compras</h1>
+        <p>Registro de todas las compras realizadas</p>
+    </div>
+    
+    <a href="index.html" class="btn-volver">← Volver a la Tienda</a>
+    
+    <div id="historial">
+        <!-- Las compras se cargarán aquí -->
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarHistorial();
+        });
+        
+        function cargarHistorial() {
+            fetch('historial.php')
+                .then(response => response.json())
+                .then(data => {
+                    mostrarHistorial(data);
+                })
+                .catch(error => {
+                    document.getElementById('historial').innerHTML = 
+                        '<div class="no-compras">Error al cargar el historial</div>';
+                });
+        }
+        
+        function mostrarHistorial(compras) {
+            const historialDiv = document.getElementById('historial');
+            
+            if (!compras || compras.length === 0) {
+                historialDiv.innerHTML = '<div class="no-compras">No hay compras registradas</div>';
+                return;
+            }
+            
+            let html = '';
+            compras.reverse().forEach(compra => {
+                html += `
+                    <div class="compra">
+                        <div class="compra-header">
+                            <div class="numero-orden">${compra.numero_orden}</div>
+                            <div class="fecha">${new Date(compra.fecha).toLocaleString()}</div>
+                        </div>
+                        
+                        <div class="productos-lista">
+                            <h4>Productos comprados:</h4>
+                `;
+                
+                compra.productos.forEach(producto => {
+                    html += `
+                        <div class="producto-item">
+                            <div>
+                                <strong>${producto.nombre}</strong><br>
+                                <small>$${producto.precio_unitario} × ${producto.cantidad}</small>
+                            </div>
+                            <div>$${producto.subtotal}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                        
+                        <div class="total-compra">
+                            Total: $${compra.total_precio} (${compra.total_productos} productos)
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historialDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

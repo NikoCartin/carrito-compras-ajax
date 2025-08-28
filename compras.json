@@ -1,0 +1,71 @@
+[
+    {
+        "numero_orden": "ORD-20250824-87trf8h4",
+        "fecha": "2025-08-24 06:20:37",
+        "session_id": "87trf8h41m3kresegsk0bqn6l0",
+        "productos": [
+            {
+                "id": 1,
+                "nombre": "Laptop Gaming ASUS",
+                "precio_unitario": 1299.99,
+                "cantidad": 1,
+                "subtotal": 1299.99
+            },
+            {
+                "id": 2,
+                "nombre": "iPhone 15 Pro Max",
+                "precio_unitario": 1199.99,
+                "cantidad": 1,
+                "subtotal": 1199.99
+            }
+        ],
+        "total_productos": 2,
+        "total_precio": 2499.98,
+        "estado": "completada"
+    },
+    {
+        "numero_orden": "ORD-20250824-87trf8h4",
+        "fecha": "2025-08-24 06:30:33",
+        "session_id": "87trf8h41m3kresegsk0bqn6l0",
+        "productos": [
+            {
+                "id": 1,
+                "nombre": "Laptop Gaming ASUS",
+                "precio_unitario": 1299.99,
+                "cantidad": 1,
+                "subtotal": 1299.99
+            },
+            {
+                "id": 2,
+                "nombre": "iPhone 15 Pro Max",
+                "precio_unitario": 1199.99,
+                "cantidad": 1,
+                "subtotal": 1199.99
+            },
+            {
+                "id": 6,
+                "nombre": "Mouse Gaming Razer",
+                "precio_unitario": 89.99,
+                "cantidad": 1,
+                "subtotal": 89.99
+            },
+            {
+                "id": 7,
+                "nombre": "Tablet iPad Air",
+                "precio_unitario": 729.99,
+                "cantidad": 1,
+                "subtotal": 729.99
+            },
+            {
+                "id": 12,
+                "nombre": "Smartwatch Apple Watch",
+                "precio_unitario": 429.99,
+                "cantidad": 1,
+                "subtotal": 429.99
+            }
+        ],
+        "total_productos": 5,
+        "total_precio": 3749.95,
+        "estado": "completada"
+    }
+]

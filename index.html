@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 Sistema de Carrito de Compras - AJAX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .productos-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        
+        .carrito-section {
+            background: #fff3cd;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #ffc107;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .producto {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .producto:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #4CAF50;
+        }
+        
+        .producto img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .producto h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .producto .precio {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+        
+        .producto .descripcion {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+        }
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-finalizar {
+            background: #ff6b35;
+            font-size: 1.2em;
+            padding: 15px 25px;
+            margin-top: 20px;
+        }
+        
+        .btn-finalizar:hover {
+            background: #e55a2b;
+        }
+        
+        .carrito-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4CAF50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .cantidad-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .cantidad-control button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .cantidad-control button:hover {
+            background: #c82333;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.success {
+            background: #4CAF50;
+        }
+        
+        .notification.error {
+            background: #f44336;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .total-carrito {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #4CAF50;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .productos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tienda Virtual</h1>
+            <p>Sistema de Carrito de Compras con AJAX y Sesiones</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Sección de Productos -->
+            <div class="productos-section">
+                <h2>Productos Disponibles</h2>
+                <div class="loading" id="loadingProductos">
+                    <p>Cargando productos...</p>
+                </div>
+                <div class="productos-grid" id="productosGrid">
+                    <!-- Los productos se cargarán aquí con AJAX -->
+                </div>
+            </div>
+            
+            <!-- Sección del Carrito -->
+            <div class="carrito-section">
+                <h2>Mi Carrito</h2>
+                <div id="carritoItems">
+                    <p style="text-align: center; color: #666;">El carrito está vacío</p>
+                </div>
+                <div class="total-carrito" id="totalCarrito" style="display: none;">
+                    Total: $0.00
+                </div>
+                <button class="btn btn-finalizar" id="btnFinalizar" onclick="finalizarCompra()" style="display: none;">
+                    Finalizar Compra
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notificaciones -->
+    <div id="notification" class="notification"></div>
+    
+    <script>
+        // Variables globales
+        let carrito = [];
+        let productos = [];
+        
+        // Cargar productos al iniciar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarProductos();
+            cargarCarrito();
+        });
+        
+        // Función para cargar productos con AJAX
+        function cargarProductos() {
+            const loading = document.getElementById('loadingProductos');
+            const grid = document.getElementById('productosGrid');
+            
+            loading.style.display = 'block';
+            
+            let conexion = new XMLHttpRequest();
+            
+            conexion.onload = function() {
+                loading.style.display = 'none';
+                
+                if (conexion.status === 200) {
+                    try {
+                        productos = JSON.parse(conexion.responseText);
+                        mostrarProductos(productos);
+                    } catch (e) {
+                        mostrarNotificacion('Error al cargar productos', 'error');
+                    }
+                } else {
+                    mostrarNotificacion('Error al conectar con el servidor', 'error');
+                }
+            };
+            
+            conexion.onerror = function() {
+                loading.style.display = 'none';
+                mostrarNotificacion('Error de conexión', 'error');
+            };
+            
+            conexion.open('GET', 'productos.php');
+            conexion.send();
+        }
+        
+        // Función para mostrar productos en el HTML
+        function mostrarProductos(productos) {
+            const grid = document.getElementById('productosGrid');
+            let html = '';
+            
+            productos.forEach(producto => {
+                html += `
+                    <div class="producto" data-id="${producto.id}">
+                        <img src="${producto.imagen}" alt="${producto.nombre}" onerror="this.src='https://via.placeholder.com/300x200?text=Producto'">
+                        <h3>${producto.nombre}</h3>
+                        <div class="precio">$${producto.precio}</div>
+                        <div class="descripcion">${producto.descripcion}</div>
+                        <button class="btn" onclick="agregarAlCarrito(${producto.id})">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        // Función para agregar producto al carrito
+        function agregarAlCarrito(productoId) {
+            let conexion = new XMLHttpRequest();
+            
+            conexion.onload = function() {
+                if (conexion.status === 200) {
+                    const respuesta = JSON.parse(conexion.responseText);
+                    if (respuesta.success) {
+                        mostrarNotificacion('Producto agregado al carrito', 'success');
+                        cargarCarrito();
+                    } else {
+                        mostrarNotificacion(respuesta.message || 'Error al agregar producto', 'error');
+                    }
+                } else {
+                    mostrarNotificacion('Error al agregar producto', 'error');
+                }
+            };
+            
+            conexion.onerror = function() {
+                mostrarNotificacion('Error de conexión', 'error');
+            };
+            
+            conexion.open('POST', 'carrito.php');
+            conexion.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            conexion.send(`action=agregar&producto_id=${productoId}`);
+        }
+        
+        // Función para cargar el carrito actual
+        function cargarCarrito() {
+            let conexion = new XMLHttpRequest();
+            
+            conexion.onload = function() {
+                if (conexion.status === 200) {
+                    const respuesta = JSON.parse(conexion.responseText);
+                    mostrarCarrito(respuesta.carrito, respuesta.total);
+                }
+            };
+            
+            conexion.open('GET', 'carrito.php?action=obtener');
+            conexion.send();
+        }
+        
+        // Función para mostrar el carrito
+        function mostrarCarrito(carritoItems, total) {
+            const carritoDiv = document.getElementById('carritoItems');
+            const totalDiv = document.getElementById('totalCarrito');
+            const btnFinalizar = document.getElementById('btnFinalizar');
+            
+            if (carritoItems.length === 0) {
+                carritoDiv.innerHTML = '<p style="text-align: center; color: #666;">El carrito está vacío</p>';
+                totalDiv.style.display = 'none';
+                btnFinalizar.style.display = 'none';
+                return;
+            }
+            
+            let html = '';
+            carritoItems.forEach(item => {
+                html += `
+                    <div class="carrito-item">
+                        <div>
+                            <strong>${item.nombre}</strong><br>
+                            <small>$${item.precio} c/u</small>
+                        </div>
+                        <div class="cantidad-control">
+                            <button onclick="cambiarCantidad(${item.id}, -1)">-</button>
+                            <span>${item.cantidad}</span>
+                            <button onclick="cambiarCantidad(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            carritoDiv.innerHTML = html;
+            totalDiv.innerHTML = `Total: $${total}`;
+            totalDiv.style.display = 'block';
+            btnFinalizar.style.display = 'block';
+        }
+        
+        // Función para cambiar cantidad de productos
+        function cambiarCantidad(productoId, cambio) {
+            let conexion = new XMLHttpRequest();
+            
+            conexion.onload = function() {
+                if (conexion.status === 200) {
+                    const respuesta = JSON.parse(conexion.responseText);
+                    if (respuesta.success) {
+                        cargarCarrito();
+                    } else {
+                        mostrarNotificacion(respuesta.message || 'Error al actualizar cantidad', 'error');
+                    }
+                }
+            };
+            
+            conexion.open('POST', 'carrito.php');
+            conexion.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            conexion.send(`action=cambiar_cantidad&producto_id=${productoId}&cambio=${cambio}`);
+        }
+        
+        // Función para finalizar compra
+        function finalizarCompra() {
+            if (confirm('¿Estás seguro de que quieres finalizar la compra?')) {
+                let conexion = new XMLHttpRequest();
+                
+                conexion.onload = function() {
+                    if (conexion.status === 200) {
+                        const respuesta = JSON.parse(conexion.responseText);
+                        if (respuesta.success) {
+                            mostrarNotificacion('¡Compra finalizada exitosamente!', 'success');
+                            cargarCarrito(); // Recargar carrito vacío
+                            
+                            // Mostrar resumen de compra
+                            setTimeout(() => {
+                                alert(`¡Compra finalizada!\n\nTotal: $${respuesta.total}\nProductos: ${respuesta.total_productos}\nFecha: ${respuesta.fecha}`);
+                            }, 1000);
+                        } else {
+                            mostrarNotificacion(respuesta.message || 'Error al finalizar compra', 'error');
+                        }
+                    }
+                };
+                
+                conexion.open('POST', 'finalizar.php');
+                conexion.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                conexion.send('action=finalizar');
+            }
+        }
+        
+        // Función para mostrar notificaciones
+        function mostrarNotificacion(mensaje, tipo) {
+            const notification = document.getElementById('notification');
+            notification.textContent = mensaje;
+            notification.className = `notification ${tipo}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
