@@ -1,20 +1,35 @@
-# Sistema de Carrito de Compras - AJAX y Sesiones
+# ![Portada del proyecto](Portada.png)
+
+
+# Sistema de Carrito de Compras - AJAX (Solo Invitado)
+
+
+**Autor: Nicolás Cartin Reyes**
 
 ## Descripción del Proyecto
 
-Este proyecto implementa un sistema completo de carrito de compras que utiliza tecnologías web modernas como AJAX, PHP y sesiones del servidor. El sistema ha sido desarrollado para cumplir con todos los requisitos establecidos en la tarea práctica del curso, proporcionando una solución robusta y funcional para el manejo de productos y compras en línea.
+
+Este proyecto implementa un sistema de carrito de compras usando AJAX, PHP y sesiones del servidor. Actualmente, el sistema está optimizado para compras como invitado: no existe login, registro ni autenticación de usuarios. El flujo es simple y directo: el usuario selecciona productos, llena sus datos al finalizar la compra y el pedido se almacena en el servidor.
 
 ## Características Principales
 
+
 ### Requisitos Cumplidos
 
-El sistema cumple satisfactoriamente con todos los requisitos especificados en la tarea práctica. Se han implementado más de diez productos únicos, específicamente doce productos diferentes con sus respectivas características. El sistema permite la selección y almacenamiento de productos en un carrito de compras que utiliza sesiones del servidor para mantener la persistencia de datos entre las diferentes páginas y solicitudes. El botón de "Finalizar compra" se encuentra completamente funcional y procesa las órdenes de manera efectiva.
+El sistema cumple con los requisitos de la tarea práctica: muestra más de diez productos, permite agregarlos a un carrito persistente (usando sesiones PHP) y finalizar la compra con un formulario de datos básicos (nombre, correo, teléfono). El botón "Finalizar compra" procesa la orden y almacena la información en el servidor.
 
-### Funcionalidades Adicionales
 
-Además de los requisitos básicos, el sistema incluye características adicionales que mejoran la experiencia del usuario. El diseño es completamente responsivo, adaptándose a diferentes tamaños de pantalla incluyendo dispositivos móviles. Las actualizaciones del carrito se realizan en tiempo real utilizando AJAX sin necesidad de recargar la página. Se ha implementado un panel de control dinámico que muestra información actualizada sobre el estado del carrito y un sistema de historial que permite visualizar todas las compras realizadas. El manejo de errores es robusto y proporciona retroalimentación clara al usuario en caso de problemas.
+
+### Funcionalidades Actuales
+
+- **Compra como Invitado:** No es necesario registrarse ni iniciar sesión. Al finalizar la compra, se solicitan nombre, correo y teléfono.
+- **Diseño Responsivo:** El sistema se adapta a cualquier dispositivo, incluyendo móviles.
+- **Actualización en Tiempo Real:** El carrito y las notificaciones funcionan con AJAX, sin recargar la página.
+- **Historial de Compras:** Se almacena el historial de compras en el servidor (opcional, según configuración).
 
 ## Estructura de Archivos
+
+
 
 ```
 Carrito de Compras/
@@ -22,21 +37,23 @@ Carrito de Compras/
 ├── productos.php       # API que devuelve lista de productos
 ├── carrito.php         # Manejo de operaciones del carrito
 ├── finalizar.php       # Procesamiento de compra final
-├── historial.html      # Página para ver historial de compras
-├── historial.php       # API para obtener historial
+├── historial.html      # Página para ver historial de compras (opcional)
+├── historial.php       # API para obtener historial (opcional)
+├── compras.json        # Archivo generado con las compras
+├── compras.txt         # Archivo de compras en formato texto/CSV
 ├── README.md           # Este archivo de documentación
-└── compras.json        # Archivo generado con las compras
 ```
 
 ## Tecnologías Utilizadas
 
 El desarrollo del sistema se ha realizado utilizando un conjunto de tecnologías web modernas y estándares de la industria. En el frontend se emplean HTML5 para la estructura, CSS3 para el diseño y presentación visual, y JavaScript puro para implementar la funcionalidad AJAX sin dependencias externas. El backend está construido con PHP, aprovechando su capacidad nativa para el manejo de sesiones. Para el almacenamiento de datos se utilizan las sesiones de PHP para la persistencia temporal del carrito y archivos JSON para el almacenamiento permanente del historial de compras. El diseño visual implementa técnicas modernas como CSS Grid y Flexbox para crear una interfaz completamente responsiva.
 
+
 ## Funcionalidad del Sistema
 
 ### Página Principal
 
-La página principal del sistema presenta una interfaz intuitiva donde se muestran los doce productos disponibles. Cada producto incluye información detallada como imagen, nombre, precio y descripción. El carrito de compras se presenta en una barra lateral dinámica que se actualiza en tiempo real. Los usuarios pueden agregar productos al carrito mediante botones claramente identificados, y el sistema proporciona controles para ajustar las cantidades de cada producto.
+La página principal muestra los productos disponibles (con imagen, nombre, precio y descripción). El carrito se actualiza en tiempo real y permite agregar productos, modificar cantidades y ver el total. Al finalizar la compra, se solicita un formulario con nombre, correo y teléfono.
 
 ### Gestión de Productos
 
@@ -46,13 +63,17 @@ El proceso de agregar productos al carrito es fluido e intuitivo. Los usuarios p
 
 Una vez que los productos han sido agregados al carrito, los usuarios tienen control completo sobre su contenido. Pueden visualizar todos los productos agregados en tiempo real, incluyendo nombres, precios y cantidades. El sistema permite modificar las cantidades utilizando botones intuitivos de incremento y decremento. El total de la compra se calcula y actualiza automáticamente con cada cambio. Si la cantidad de un producto se reduce a cero, el producto se elimina automáticamente del carrito.
 
+
+
 ### Proceso de Finalización
 
-Cuando el usuario decide completar su compra, puede utilizar el botón "Finalizar Compra" que aparece cuando hay productos en el carrito. El sistema solicita confirmación antes de procesar la orden, proporcionando una oportunidad para revisar la decisión. Una vez confirmada, la aplicación genera un número de orden único, guarda los detalles de la compra en el historial y vacía automáticamente el carrito para permitir nuevas compras.
+Al finalizar la compra, siempre se solicita nombre, correo y teléfono. No existe autenticación ni registro de usuarios. La compra se almacena en el historial y en un archivo de texto/CSV para control administrativo.
+
+
 
 ### Sistema de Historial
 
-El sistema incluye una funcionalidad de historial que permite a los usuarios revisar todas las compras realizadas previamente. Esta característica está disponible a través de una página dedicada que muestra los detalles completos de cada orden, incluyendo productos comprados, cantidades, precios y fechas de las transacciones, todo organizado de manera clara y cronológica.
+Opcionalmente, se puede consultar el historial de compras (si está habilitado en el backend). El historial muestra los detalles de cada orden, incluyendo productos, cantidades, precios y fechas.
 
 ## Implementación Técnica de AJAX
 
@@ -104,11 +125,10 @@ conexion.onerror = function() {
 };
 ```
 
+
 ## Gestión de Sesiones en PHP
 
-### Inicialización del Sistema
-
-El manejo de sesiones en PHP es fundamental para mantener el estado del carrito entre diferentes solicitudes del usuario. El sistema inicializa las sesiones al comienzo de cada script PHP que requiere acceso al carrito. Si es la primera vez que un usuario accede al sistema, se crea automáticamente un array vacío para almacenar los productos del carrito.
+El sistema utiliza sesiones PHP para mantener el estado del carrito entre solicitudes. Al agregar productos, estos se almacenan en la sesión del usuario hasta finalizar la compra.
 
 ```php
 session_start();
@@ -171,9 +191,11 @@ El código está bien documentado y estructurado siguiendo las mejores práctica
 
 ---
 
+
+
 ## Información del Autor
 
-Este proyecto ha sido desarrollado como parte de la Tarea Práctica 1 del curso AJAX, por Nícolas Cartín Reyes, enfocándose específicamente en el tema "Sesiones en el Servidor". El sistema demuestra la aplicación práctica de conceptos fundamentales de desarrollo web incluyendo AJAX, PHP, sesiones del servidor y diseño responsivo.
+Este proyecto ha sido desarrollado íntegramente por **Nicolás Cartin Reyes** como parte de la Tarea Práctica Final del curso AJAX. El sistema implementa el tema de "Sesiones en el Servidor" y el flujo de compra como invitado, usando AJAX, PHP, HTML5, CSS3 y JavaScript puro. El diseño es responsivo y profesional.
 
 ---
 
