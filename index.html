@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Carrito de Compras - AJAX</title>
+    <title>🛒 Sistema de Carrito de Compras - AJAX</title>
     <style>
         * {
             margin: 0;
@@ -231,6 +231,7 @@
     </style>
 </head>
 <body>
+
     <div class="container">
         <div class="header">
             <h1>Tienda Virtual</h1>
@@ -238,18 +239,18 @@
         </div>
         
         <div class="main-content">
-            <!-- Sección de Productos -->
+
             <div class="productos-section">
                 <h2>Productos Disponibles</h2>
                 <div class="loading" id="loadingProductos">
                     <p>Cargando productos...</p>
                 </div>
                 <div class="productos-grid" id="productosGrid">
-                    <!-- Los productos se cargarán aquí con AJAX -->
+
                 </div>
             </div>
             
-            <!-- Sección del Carrito -->
+
             <div class="carrito-section">
                 <h2>Mi Carrito</h2>
                 <div id="carritoItems">
@@ -258,28 +259,53 @@
                 <div class="total-carrito" id="totalCarrito" style="display: none;">
                     Total: $0.00
                 </div>
-                <button class="btn btn-finalizar" id="btnFinalizar" onclick="finalizarCompra()" style="display: none;">
+                <button class="btn btn-finalizar" id="btnFinalizar" onclick="mostrarFormularioUsuario()" style="display: none;">
                     Finalizar Compra
                 </button>
+            </div>
+
+
+            <div id="modalUsuario" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+                <form id="formUsuario" style="background:#fff; padding:30px; border-radius:10px; min-width:300px; max-width:90vw; box-shadow:0 4px 20px #0002; display:flex; flex-direction:column; gap:15px;">
+                    <h3>Datos para finalizar compra</h3>
+                    <div id="camposInvitado" class="campos-invitado">
+    <style>
+    .campos-invitado {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    </style>
+                        <input type="text" id="nombreUsuario" name="nombre" placeholder="Nombre completo" required>
+                        <input type="email" id="correoUsuario" name="correo" placeholder="Correo electrónico" required>
+                        <input type="tel" id="telefonoUsuario" name="telefono" placeholder="Teléfono" required pattern="[0-9\-\+\s]+">
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end;">
+                        <button type="button" onclick="ocultarFormularioUsuario()">Cancelar</button>
+                        <button type="submit">Finalizar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
     
-    <!-- Notificaciones -->
+
     <div id="notification" class="notification"></div>
     
-    <script>
-        // Variables globales
-        let carrito = [];
-        let productos = [];
+        <script>
+
+
+    let carrito = [];
+    let productos = [];
         
-        // Cargar productos al iniciar la página
+
         document.addEventListener('DOMContentLoaded', function() {
             cargarProductos();
             cargarCarrito();
         });
         
-        // Función para cargar productos con AJAX
+
         function cargarProductos() {
             const loading = document.getElementById('loadingProductos');
             const grid = document.getElementById('productosGrid');
@@ -312,11 +338,10 @@
             conexion.send();
         }
         
-        // Función para mostrar productos en el HTML
+
         function mostrarProductos(productos) {
             const grid = document.getElementById('productosGrid');
             let html = '';
-            
             productos.forEach(producto => {
                 html += `
                     <div class="producto" data-id="${producto.id}">
@@ -330,11 +355,10 @@
                     </div>
                 `;
             });
-            
             grid.innerHTML = html;
         }
         
-        // Función para agregar producto al carrito
+
         function agregarAlCarrito(productoId) {
             let conexion = new XMLHttpRequest();
             
@@ -361,7 +385,7 @@
             conexion.send(`action=agregar&producto_id=${productoId}`);
         }
         
-        // Función para cargar el carrito actual
+
         function cargarCarrito() {
             let conexion = new XMLHttpRequest();
             
@@ -376,19 +400,17 @@
             conexion.send();
         }
         
-        // Función para mostrar el carrito
+
         function mostrarCarrito(carritoItems, total) {
             const carritoDiv = document.getElementById('carritoItems');
             const totalDiv = document.getElementById('totalCarrito');
             const btnFinalizar = document.getElementById('btnFinalizar');
-            
             if (carritoItems.length === 0) {
                 carritoDiv.innerHTML = '<p style="text-align: center; color: #666;">El carrito está vacío</p>';
                 totalDiv.style.display = 'none';
                 btnFinalizar.style.display = 'none';
                 return;
             }
-            
             let html = '';
             carritoItems.forEach(item => {
                 html += `
@@ -405,14 +427,13 @@
                     </div>
                 `;
             });
-            
             carritoDiv.innerHTML = html;
             totalDiv.innerHTML = `Total: $${total}`;
             totalDiv.style.display = 'block';
             btnFinalizar.style.display = 'block';
         }
         
-        // Función para cambiar cantidad de productos
+
         function cambiarCantidad(productoId, cambio) {
             let conexion = new XMLHttpRequest();
             
@@ -432,35 +453,49 @@
             conexion.send(`action=cambiar_cantidad&producto_id=${productoId}&cambio=${cambio}`);
         }
         
-        // Función para finalizar compra
-        function finalizarCompra() {
-            if (confirm('¿Estás seguro de que quieres finalizar la compra?')) {
-                let conexion = new XMLHttpRequest();
-                
-                conexion.onload = function() {
-                    if (conexion.status === 200) {
-                        const respuesta = JSON.parse(conexion.responseText);
-                        if (respuesta.success) {
-                            mostrarNotificacion('¡Compra finalizada exitosamente!', 'success');
-                            cargarCarrito(); // Recargar carrito vacío
-                            
-                            // Mostrar resumen de compra
-                            setTimeout(() => {
-                                alert(`¡Compra finalizada!\n\nTotal: $${respuesta.total}\nProductos: ${respuesta.total_productos}\nFecha: ${respuesta.fecha}`);
-                            }, 1000);
-                        } else {
-                            mostrarNotificacion(respuesta.message || 'Error al finalizar compra', 'error');
-                        }
-                    }
-                };
-                
-                conexion.open('POST', 'finalizar.php');
-                conexion.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                conexion.send('action=finalizar');
-            }
+
+        function mostrarFormularioUsuario() {
+            document.getElementById('camposInvitado').style.display = 'block';
+            document.getElementById('modalUsuario').style.display = 'flex';
         }
+
+        function ocultarFormularioUsuario() {
+            document.getElementById('modalUsuario').style.display = 'none';
+        }
+
+
+        document.getElementById('formUsuario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombreUsuario').value.trim();
+            const correo = document.getElementById('correoUsuario').value.trim();
+            const telefono = document.getElementById('telefonoUsuario').value.trim();
+            if (!nombre || !correo || !telefono) {
+                mostrarNotificacion('Por favor, completa todos los campos.', 'error');
+                return;
+            }
+            let postData = `action=finalizar&nombre=${encodeURIComponent(nombre)}&correo=${encodeURIComponent(correo)}&telefono=${encodeURIComponent(telefono)}`;
+            let conexion = new XMLHttpRequest();
+            conexion.onload = function() {
+                if (conexion.status === 200) {
+                    const respuesta = JSON.parse(conexion.responseText);
+                    if (respuesta.success) {
+                        mostrarNotificacion('¡Compra finalizada exitosamente!', 'success');
+                        cargarCarrito();
+                        ocultarFormularioUsuario();
+                        setTimeout(() => {
+                            alert(`¡Compra finalizada!\n\nTotal: $${respuesta.total}\nProductos: ${respuesta.total_productos}\nFecha: ${respuesta.fecha}`);
+                        }, 1000);
+                    } else {
+                        mostrarNotificacion(respuesta.message || 'Error al finalizar compra', 'error');
+                    }
+                }
+            };
+            conexion.open('POST', 'finalizar.php');
+            conexion.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            conexion.send(postData);
+        });
         
-        // Función para mostrar notificaciones
+
         function mostrarNotificacion(mensaje, tipo) {
             const notification = document.getElementById('notification');
             notification.textContent = mensaje;

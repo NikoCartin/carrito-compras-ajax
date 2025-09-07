@@ -1,0 +1,4 @@
+# Archivo de compras (CSV)
+# Formato: numero_orden,fecha,nombre,correo,telefono,total_productos,total_precio
+ORD-20250908-57vc5dg4,2025-09-08 00:39:04,Banano,nicolascartinreyes@gmail.com,8825-5536,1,649.99
+ORD-20250908-57vc5dg4,2025-09-08 00:40:44,Coca-Cola Company,info@hablemosdemma.com,8888-8888,1,1299.99

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Carrito de Compras</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f0f0; }
+        .registro-container { max-width: 350px; margin: 80px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px #0002; }
+        h2 { text-align: center; margin-bottom: 20px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+        button { width: 100%; padding: 10px; background: #4CAF50; color: #fff; border: none; border-radius: 5px; font-size: 1em; cursor: pointer; }
+        .error { color: #c00; text-align: center; margin-bottom: 10px; }
+        .success { color: #080; text-align: center; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="registro-container">
+        <h2>Crear Cuenta</h2>
+        <form id="registroForm">
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre completo" required>
+            <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+            <input type="tel" id="telefono" name="telefono" placeholder="Teléfono" required>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required minlength="6">
+            <button type="submit" id="btnRegistro">Registrarse</button>
+        </form>
+        <div id="registroMsg"></div>
+        <div style="text-align:center; margin-top:10px;">
+            <a href="login.html">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const msg = document.getElementById('registroMsg');
+            const btn = document.getElementById('btnRegistro');
+            msg.textContent = '';
+            msg.className = '';
+            btn.disabled = true;
+            // Validación frontend de campos vacíos
+            if (!nombre || !correo || !telefono || !password) {
+                msg.className = 'error';
+                msg.textContent = 'Todos los campos son obligatorios.';
+                btn.disabled = false;
+                return;
+            }
+            // Validación frontend de longitud de contraseña
+            if (password.length < 6) {
+                msg.className = 'error';
+                msg.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+                btn.disabled = false;
+                return;
+            }
+            // Validación de email único en frontend
+            fetch('usuarios_check.php')
+                .then(res => res.json())
+                .then(correos => {
+                    if (correos.includes(correo)) {
+                        msg.className = 'error';
+                        msg.textContent = 'El correo ya está registrado.';
+                        btn.disabled = false;
+                        return;
+                    }
+                    // Si no existe, continuar registro
+                    fetch('registro.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `nombre=${encodeURIComponent(nombre)}&correo=${encodeURIComponent(correo)}&telefono=${encodeURIComponent(telefono)}&password=${encodeURIComponent(password)}`
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            msg.className = 'success';
+                            msg.textContent = '¡Registro exitoso! Ahora puedes iniciar sesión.';
+                            document.getElementById('registroForm').reset();
+                            setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                        } else {
+                            msg.className = 'error';
+                            msg.textContent = data.message || 'Error en el registro';
+                        }
+                        btn.disabled = false;
+                    })
+                    .catch(() => {
+                        msg.className = 'error';
+                        msg.textContent = 'Error de conexión';
+                        btn.disabled = false;
+                    });
+                })
+                .catch(() => {
+                    msg.className = 'error';
+                    msg.textContent = 'Error de conexión';
+                    btn.disabled = false;
+                });
+        });
+    </script>
+</body>
+</html>

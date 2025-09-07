@@ -4,6 +4,7 @@
 session_start();
 header('Content-Type: application/json');
 
+
 // Verificar que hay productos en el carrito
 if (!isset($_SESSION['carrito']) || empty($_SESSION['carrito'])) {
     http_response_code(400);
@@ -12,6 +13,25 @@ if (!isset($_SESSION['carrito']) || empty($_SESSION['carrito'])) {
         'message' => 'El carrito está vacío'
     ]);
     exit;
+}
+
+// Si hay usuario autenticado, usar datos de sesión
+if (isset($_SESSION['usuario'])) {
+    $nombre = $_SESSION['usuario']['nombre'];
+    $correo = $_SESSION['usuario']['correo'];
+    $telefono = isset($_SESSION['usuario']['telefono']) ? $_SESSION['usuario']['telefono'] : '';
+} else {
+    $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : '';
+    $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
+    $telefono = isset($_POST['telefono']) ? trim($_POST['telefono']) : '';
+    if ($nombre === '' || $correo === '' || $telefono === '') {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Faltan datos de usuario (nombre, correo o teléfono)'
+        ]);
+        exit;
+    }
 }
 
 try {
@@ -42,6 +62,9 @@ try {
         'numero_orden' => $numero_orden,
         'fecha' => date('Y-m-d H:i:s'),
         'session_id' => session_id(),
+        'nombre' => $nombre,
+        'correo' => $correo,
+        'telefono' => $telefono,
         'productos' => $detalles_compra,
         'total_productos' => $total_productos,
         'total_precio' => round($total_precio, 2),
@@ -59,13 +82,27 @@ try {
     
     $compras_existentes[] = $compra;
     file_put_contents($archivo_compras, json_encode($compras_existentes, JSON_PRETTY_PRINT));
-    
+
+    // Guardar datos de usuario y compra en compras.txt (CSV)
+    $archivo_txt = 'compras.txt';
+    $linea = sprintf(
+        "%s,%s,%s,%s,%s,%s,%s\n",
+        $numero_orden,
+        date('Y-m-d H:i:s'),
+        str_replace(["\n",","], [" "," "], $nombre),
+        str_replace(["\n",","], [" "," "], $correo),
+        str_replace(["\n",","], [" "," "], $telefono),
+        $total_productos,
+        round($total_precio,2)
+    );
+    file_put_contents($archivo_txt, $linea, FILE_APPEND);
+
     // Limpiar el carrito
     $_SESSION['carrito'] = [];
-    
+
     // Registrar en log
     error_log("Compra finalizada: $numero_orden - Total: $" . $compra['total_precio']);
-    
+
     // Respuesta exitosa
     echo json_encode([
         'success' => true,
