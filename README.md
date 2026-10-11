@@ -1,134 +1,118 @@
-# ![Portada del proyecto](Portada.png)
+# AJAX Shopping Cart System - Guest Checkout
 
+**Author: Nicolas Cartin Reyes**
 
-# Sistema de Carrito de Compras - AJAX (Solo Invitado)
+## Project Overview
 
+This project implements a shopping cart using AJAX, PHP, and server-side sessions. It is optimized for guest checkout: there is no login, registration, or user authentication. Customers select products, provide their details during checkout, and the order is stored on the server.
 
-**Autor: Nicolás Cartin Reyes**
+## Main Features
 
-## Descripción del Proyecto
+### Requirements Demonstrated
 
+The system demonstrates a practical shopping workflow with more than ten products, a persistent cart backed by PHP sessions, and a checkout form that collects the customer's name, email address, and phone number. The checkout action processes the order and stores the information on the server.
 
-Este proyecto implementa un sistema de carrito de compras usando AJAX, PHP y sesiones del servidor. Actualmente, el sistema está optimizado para compras como invitado: no existe login, registro ni autenticación de usuarios. El flujo es simple y directo: el usuario selecciona productos, llena sus datos al finalizar la compra y el pedido se almacena en el servidor.
+### Current Functionality
 
-## Características Principales
+- **Guest checkout:** Registration and login are not required. Customers provide their name, email, and phone number at checkout.
+- **Responsive design:** The interface adapts to desktop and mobile devices.
+- **Real-time updates:** Cart actions and notifications use AJAX without full-page reloads.
+- **Purchase history:** Purchase history can be stored on the server when enabled by the configuration.
 
+## File Structure
 
-### Requisitos Cumplidos
-
-El sistema cumple con los requisitos de la tarea práctica: muestra más de diez productos, permite agregarlos a un carrito persistente (usando sesiones PHP) y finalizar la compra con un formulario de datos básicos (nombre, correo, teléfono). El botón "Finalizar compra" procesa la orden y almacena la información en el servidor.
-
-
-
-### Funcionalidades Actuales
-
-- **Compra como Invitado:** No es necesario registrarse ni iniciar sesión. Al finalizar la compra, se solicitan nombre, correo y teléfono.
-- **Diseño Responsivo:** El sistema se adapta a cualquier dispositivo, incluyendo móviles.
-- **Actualización en Tiempo Real:** El carrito y las notificaciones funcionan con AJAX, sin recargar la página.
-- **Historial de Compras:** Se almacena el historial de compras en el servidor (opcional, según configuración).
-
-## Estructura de Archivos
-
-
-
-```
-Carrito de Compras/
-├── index.html          # Página principal con productos y carrito
-├── productos.php       # API que devuelve lista de productos
-├── carrito.php         # Manejo de operaciones del carrito
-├── finalizar.php       # Procesamiento de compra final
-├── historial.html      # Página para ver historial de compras (opcional)
-├── historial.php       # API para obtener historial (opcional)
-├── compras.json        # Archivo generado con las compras
-├── compras.txt         # Archivo de compras en formato texto/CSV
-├── README.md           # Este archivo de documentación
+```text
+Shopping Cart/
+├── index.html          # Main page with products and cart
+├── productos.php       # API that returns the product list
+├── carrito.php         # Cart operations
+├── finalizar.php       # Final checkout processing
+├── historial.html      # Purchase history page (optional)
+├── historial.php       # Purchase history API (optional)
+├── compras.json        # Generated purchase-history file
+├── compras.txt         # Purchase data in text/CSV format
+└── README.md           # Project documentation
 ```
 
-## Tecnologías Utilizadas
+## Technologies
 
-El desarrollo del sistema se ha realizado utilizando un conjunto de tecnologías web modernas y estándares de la industria. En el frontend se emplean HTML5 para la estructura, CSS3 para el diseño y presentación visual, y JavaScript puro para implementar la funcionalidad AJAX sin dependencias externas. El backend está construido con PHP, aprovechando su capacidad nativa para el manejo de sesiones. Para el almacenamiento de datos se utilizan las sesiones de PHP para la persistencia temporal del carrito y archivos JSON para el almacenamiento permanente del historial de compras. El diseño visual implementa técnicas modernas como CSS Grid y Flexbox para crear una interfaz completamente responsiva.
+The frontend uses HTML5 for structure, CSS3 for presentation, and vanilla JavaScript for AJAX behavior without external dependencies. The backend uses PHP and native session handling. PHP sessions provide temporary cart persistence, while JSON files provide permanent purchase-history storage. CSS Grid and Flexbox are used for the responsive layout.
 
+## System Flow
 
-## Funcionalidad del Sistema
+### Main Page
 
-### Página Principal
+The main page displays available products with images, names, prices, and descriptions. Customers can add products, change quantities, review the total, and open the checkout form.
 
-La página principal muestra los productos disponibles (con imagen, nombre, precio y descripción). El carrito se actualiza en tiempo real y permite agregar productos, modificar cantidades y ver el total. Al finalizar la compra, se solicita un formulario con nombre, correo y teléfono.
+### Product Management
 
-### Gestión de Productos
+Customers add products through the product controls. The action is sent to the server with AJAX, so the cart updates without reloading the page. Visual notifications confirm successful actions.
 
-El proceso de agregar productos al carrito es fluido e intuitivo. Los usuarios pueden hacer clic en el botón correspondiente de cada producto para agregarlo al carrito. Esta acción se procesa mediante AJAX, enviando una solicitud al servidor sin necesidad de recargar la página. El carrito se actualiza automáticamente, mostrando el nuevo producto agregado junto con notificaciones visuales que confirman la acción realizada.
+### Cart Management
 
-### Administración del Carrito
+Customers can review all cart items, change quantities, and remove products. The total is recalculated automatically after each change. When a product quantity reaches zero, that product is removed from the cart.
 
-Una vez que los productos han sido agregados al carrito, los usuarios tienen control completo sobre su contenido. Pueden visualizar todos los productos agregados en tiempo real, incluyendo nombres, precios y cantidades. El sistema permite modificar las cantidades utilizando botones intuitivos de incremento y decremento. El total de la compra se calcula y actualiza automáticamente con cada cambio. Si la cantidad de un producto se reduce a cero, el producto se elimina automáticamente del carrito.
+### Checkout
 
+The checkout form requests the customer's name, email, and phone number. No authentication or registration is required. The order is stored in the purchase history and in a text/CSV file for administrative review.
 
+### Purchase History
 
-### Proceso de Finalización
+When enabled, the purchase-history page displays order details including products, quantities, prices, and dates.
 
-Al finalizar la compra, siempre se solicita nombre, correo y teléfono. No existe autenticación ni registro de usuarios. La compra se almacena en el historial y en un archivo de texto/CSV para control administrativo.
+## AJAX Implementation
 
+### GET Requests
 
-
-### Sistema de Historial
-
-Opcionalmente, se puede consultar el historial de compras (si está habilitado en el backend). El historial muestra los detalles de cada orden, incluyendo productos, cantidades, precios y fechas.
-
-## Implementación Técnica de AJAX
-
-### Peticiones GET
-
-El sistema utiliza peticiones GET para obtener información del servidor sin modificar datos. Estas solicitudes se emplean principalmente para cargar la lista de productos desde el archivo productos.php y para obtener el estado actual del carrito desde carrito.php. Las peticiones GET son ideales para estas operaciones porque no alteran el estado del servidor y pueden ser cachadas por el navegador para mejorar el rendimiento.
+GET requests retrieve server data without changing it. They are used to load products from `productos.php` and retrieve the current cart state from `carrito.php`.
 
 ```javascript
-// Cargar productos
+// Load products
 conexion.open('GET', 'productos.php');
 
-// Obtener carrito actual
+// Get the current cart
 conexion.open('GET', 'carrito.php?action=obtener');
 ```
 
-### Peticiones POST
+### POST Requests
 
-Para las operaciones que modifican datos en el servidor, como agregar productos al carrito, actualizar cantidades o finalizar compras, se utilizan peticiones POST. Estas solicitudes incluyen datos en el cuerpo de la petición y requieren configurar correctamente los headers para el tipo de contenido que se está enviando.
+POST requests handle operations that change server data, including adding products, updating quantities, and completing checkout.
 
 ```javascript
-// Agregar al carrito
+// Add to cart
 conexion.open('POST', 'carrito.php');
 conexion.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 conexion.send('action=agregar&producto_id=1');
 ```
 
-### Manejo de Respuestas
+### Response Handling
 
-El sistema implementa un manejo robusto de las respuestas del servidor. Cuando una petición AJAX se completa exitosamente, el código verifica el estado de la respuesta y procesa el contenido JSON devuelto. Esto permite actualizar la interfaz de usuario de manera dinámica sin recargar la página completa.
+The application checks the response status and parses the returned JSON so the interface can update dynamically without a full-page reload.
 
 ```javascript
 conexion.onload = function() {
     if (conexion.status === 200) {
         const respuesta = JSON.parse(conexion.responseText);
-        // Procesar respuesta exitosa
+        // Process a successful response
     } else {
-        // Manejar errores
+        // Handle errors
     }
 };
 ```
 
-### Manejo de Errores
+### Error Handling
 
-Se ha implementado un sistema comprensivo de manejo de errores que abarca tanto errores de conectividad como errores de aplicación. Cuando ocurre un error de conexión, el sistema muestra mensajes informativos al usuario y registra los detalles en la consola del navegador para facilitar el debugging.
+The system handles connectivity and application errors. Connection failures display a user-facing notification and log details in the browser console for debugging.
 
 ```javascript
 conexion.onerror = function() {
-    mostrarNotificacion('Error de conexión', 'error');
+    mostrarNotificacion('Connection error', 'error');
 };
 ```
 
+## PHP Session Management
 
-## Gestión de Sesiones en PHP
-
-El sistema utiliza sesiones PHP para mantener el estado del carrito entre solicitudes. Al agregar productos, estos se almacenan en la sesión del usuario hasta finalizar la compra.
+PHP sessions preserve the cart state between requests. Products remain in the user's session until checkout is completed.
 
 ```php
 session_start();
@@ -137,9 +121,9 @@ if (!isset($_SESSION['carrito'])) {
 }
 ```
 
-### Almacenamiento de Datos
+### Data Storage
 
-Cuando un usuario agrega un producto al carrito, la información se almacena en la sesión del servidor. Cada producto se guarda con todos sus detalles relevantes, incluyendo nombre, precio y cantidad. Esta estructura permite un acceso eficiente a la información y facilita los cálculos posteriores.
+When a customer adds a product, its name, price, and quantity are stored in the server session.
 
 ```php
 $_SESSION['carrito'][$producto_id] = [
@@ -149,9 +133,9 @@ $_SESSION['carrito'][$producto_id] = [
 ];
 ```
 
-### Cálculos y Operaciones
+### Calculations
 
-El sistema incluye funciones especializadas para realizar cálculos sobre los datos del carrito almacenados en la sesión. La función de cálculo de total itera a través de todos los productos en el carrito, multiplica el precio por la cantidad de cada producto y suma todos los valores para obtener el total de la compra.
+The total-calculation function iterates over the session cart, multiplies price by quantity, and rounds the result to two decimal places.
 
 ```php
 function calcularTotal() {
@@ -163,39 +147,22 @@ function calcularTotal() {
 }
 ```
 
-## Características de Diseño y Experiencia de Usuario
+## Design and User Experience
 
-El sistema presenta un diseño moderno y profesional que prioriza la usabilidad y la accesibilidad. La interfaz utiliza un esquema de colores coherente con gradientes sutiles y sombras que proporcionan profundidad visual sin resultar abrumador. El diseño es completamente responsivo, adaptándose automáticamente a diferentes tamaños de pantalla desde computadoras de escritorio hasta dispositivos móviles.
+The interface uses a coherent color system, subtle gradients, and shadows to provide depth without overwhelming the user. The responsive layout adapts from desktop screens to mobile devices. Notifications provide immediate feedback, loading indicators communicate AJAX activity, and clear labels support intuitive navigation.
 
-Las notificaciones visuales proporcionan retroalimentación inmediata al usuario sobre las acciones realizadas, confirmando cuando los productos se agregan exitosamente o alertando sobre posibles errores. Los indicadores de carga aparecen durante las operaciones AJAX para informar al usuario que el sistema está procesando su solicitud. Los botones están diseñados con iconos descriptivos y texto claro para facilitar la navegación intuitiva.
+The information panel updates the cart item count and purchase total in real time.
 
-El panel de información se actualiza en tiempo real, mostrando el número de productos en el carrito y el total de la compra sin necesidad de recargar la página. Esta funcionalidad mejora significativamente la experiencia del usuario al proporcionar información instantánea sobre el estado de su compra.
+## Testing and Debugging
 
-## Sistema de Testing y Debugging
+Important cart operations, session changes, and checkout events are logged in PHP. AJAX requests, URLs, request data, and responses are logged in the browser console to support troubleshooting.
 
-### Registro de Eventos del Sistema
+## Project Strengths
 
-El sistema implementa un registro comprensivo de eventos que facilita el monitoreo y la resolución de problemas. Todas las operaciones importantes se registran en los logs de PHP, incluyendo las interacciones con el carrito, los cambios en las sesiones y los procesos de finalización de compras. Los identificadores de sesión se incluyen en los logs para permitir el seguimiento de usuarios específicos durante las sesiones de debugging. Los estados del carrito se registran en momentos clave para verificar que las operaciones se están realizando correctamente.
-
-### Herramientas de Debugging del Navegador
-
-Para facilitar el desarrollo y mantenimiento del sistema, se ha incluido información detallada de debugging en la consola del navegador. Las peticiones AJAX se registran con información sobre las URLs solicitadas, los datos enviados y las respuestas recibidas. Los estados de respuesta se muestran claramente para identificar rápidamente problemas de conectividad o errores del servidor. Las URLs generadas dinámicamente se muestran en la consola para verificar que se están construyendo correctamente.
-
-## Fortalezas del Proyecto
-
-Este proyecto destaca por varios aspectos que lo convierten en una implementación sólida y profesional. En primer lugar, cumple completamente con todos los requisitos especificados en la tarea práctica, asegurando que todos los objetivos académicos se han alcanzado satisfactoriamente. Más allá de los requisitos básicos, el sistema incluye funcionalidades avanzadas que demuestran un entendimiento profundo de las tecnologías web modernas.
-
-El manejo de errores es particularmente robusto, anticipando y gestionando adecuadamente las situaciones problemáticas que pueden surgir durante el uso normal del sistema. El diseño profesional y responsivo asegura que la aplicación sea accesible y usable en una amplia variedad de dispositivos y tamaños de pantalla.
-
-El código está bien documentado y estructurado siguiendo las mejores prácticas de desarrollo web. Las funciones están claramente definidas, los comentarios explican la lógica compleja y la separación de responsabilidades facilita el mantenimiento futuro. El uso correcto de AJAX se demuestra a lo largo de todas las operaciones del sistema, desde la carga inicial de productos hasta la finalización de compras. La implementación de sesiones PHP es técnicamente correcta y eficiente, proporcionando una base sólida para la persistencia de datos del carrito.
+This project demonstrates a complete guest-checkout flow with native web technologies. It combines AJAX, PHP sessions, JSON persistence, responsive design, structured error handling, and clear separation of responsibilities without relying on a framework.
 
 ---
 
+## Author
 
-
-## Información del Autor
-
-Este proyecto ha sido desarrollado íntegramente por **Nicolás Cartin Reyes** como parte de la Tarea Práctica Final del curso AJAX. El sistema implementa el tema de "Sesiones en el Servidor" y el flujo de compra como invitado, usando AJAX, PHP, HTML5, CSS3 y JavaScript puro. El diseño es responsivo y profesional.
-
----
-
+This project was developed by **Nicolas Cartin Reyes** as a practical AJAX assignment focused on server-side sessions and guest checkout using AJAX, PHP, HTML5, CSS3, and vanilla JavaScript.
