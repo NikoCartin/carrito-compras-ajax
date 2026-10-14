@@ -1,5 +1,10 @@
 # AJAX Shopping Cart System - Guest Checkout
 
+<p align="center">
+  <img src="Portada.png" alt="AJAX shopping cart and guest checkout system" width="100%"/>
+</p>
+
+
 **Author: Nicolas Cartin Reyes**
 
 ## Project Overview
